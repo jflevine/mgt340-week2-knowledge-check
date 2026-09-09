@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- MGT 340 Week 2 Knowledge Check — Version 3.1; Times New Roman enforced globally; embedded SVG visuals retained. -->
+<!-- MGT 340 Week 2 Knowledge Check — Version 4.0 secure submission; Times New Roman enforced globally; embedded SVG visuals retained; server-side scoring. -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -84,7 +84,7 @@
         </svg>
       </div>
     </div>
-    <div class="rules"><div class="rule"><strong>10 decisions · 10 points</strong>Each decision is worth one point and applies Week 2 concepts in context.</div><div class="rule"><strong>Individual work</strong>Outside resources, collaboration, and generative AI are not permitted.</div><div class="rule"><strong>Commit before you move on</strong>Once a decision is submitted, it cannot be changed.</div></div>
+    <div class="rules"><div class="rule"><strong>10 decisions · 10 points</strong>Each decision is worth one point and applies Week 2 concepts in context.</div><div class="rule"><strong>Individual work</strong>Outside resources, collaboration, and generative AI are not permitted.</div><div class="rule"><strong>Automatic secure submission</strong>Your official responses and score are saved automatically when you finish.</div></div>
     <div class="identity">
       <div class="identity-title">Student identification</div>
       <div class="identity-grid">
@@ -111,12 +111,11 @@
     <div class="eyebrow" style="color:#9a6e14">Knowledge Check Complete</div><h2 style="font-size:2.2rem;color:var(--navy);margin:0 0 6px">Submission record complete.</h2><div id="finishName" style="font-size:1.12rem;color:var(--muted);margin-bottom:8px"></div><div id="score" class="score">0</div><div class="outof">out of 10</div>
     <div class="breakdown"><div class="bitem"><strong>Functional Areas</strong><span id="functionsBand">—</span></div><div class="bitem"><strong>People & Leadership</strong><span id="peopleBand">—</span></div><div class="bitem"><strong>Decision & Change</strong><span id="changeBand">—</span></div><div class="bitem"><strong>Integrated Judgment</strong><span id="integratedBand">—</span></div></div>
     <div class="receipt"><div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--muted);margin-bottom:8px">Completion receipt</div><code id="receiptCode"></code></div>
-    <button id="downloadBtn" class="primary">Download Submission Record (.xlsx)</button> <button id="copyBtn" class="secondary">Copy Receipt</button>
-    <div class="export-note"><strong>Instructor record:</strong> the Excel file contains your identity, timestamps, final score, category subscores, dashboard metrics, and all ten selected responses. Correct answers are not included in the student workbook.</div>
-    <div class="alert"><strong>Keep this screen open until instructed otherwise.</strong> GitHub Pages cannot place everyone’s results into one central workbook by itself. This version creates an Excel submission record and is also coded to support a future secure submission endpoint.</div>
+    <button id="copyBtn" class="secondary">Copy Receipt</button>
+    <div class="export-note"><strong>Official submission saved.</strong> Your name, La Salle email, all ten decisions, final score, category scores, timing, and simulation metrics have been stored securely for your instructor. No file upload is required.</div>
+    <div class="alert"><strong>Keep this screen open until instructed otherwise.</strong> The receipt below confirms that the server accepted your submission.</div>
   </section>
 </div>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
 (() => {
   const stageVisuals = [
@@ -131,8 +130,7 @@
     `<svg viewBox="0 0 760 132"><rect width="760" height="132" fill="#f7f3ea"/><line x1="82" y1="100" x2="690" y2="100" stroke="#14213d" stroke-width="2"/><rect x="125" y="68" width="74" height="32" fill="#c79a3b"/><rect x="225" y="30" width="74" height="70" fill="#14213d"/><rect x="395" y="64" width="74" height="36" fill="#c79a3b"/><rect x="495" y="50" width="74" height="50" fill="#14213d"/><g fill="#14213d" font-size="14" text-anchor="middle"><text x="162" y="119">TARGET</text><text x="262" y="119">ACTUAL</text><text x="432" y="119">TARGET</text><text x="532" y="119">ACTUAL</text></g><text x="640" y="47" fill="#14213d" font-size="17" font-weight="700" text-anchor="middle">COMPARE</text><text x="640" y="69" fill="#625f5a" font-size="15" text-anchor="middle">DIAGNOSE</text><text x="640" y="91" fill="#625f5a" font-size="15" text-anchor="middle">IMPROVE</text></svg>`,
     `<svg viewBox="0 0 760 132"><rect width="760" height="132" fill="#eef2f7"/><circle cx="380" cy="66" r="44" fill="#fff" stroke="#14213d" stroke-width="3"/><path d="M380 17a49 49 0 0 1 42 24" fill="none" stroke="#c79a3b" stroke-width="7" stroke-linecap="round"/><polygon points="426,41 416,23 403,42" fill="#c79a3b"/><g fill="#14213d" font-size="15" font-weight="700"><text x="380" y="54" text-anchor="middle">PLAN</text><text x="416" y="72">ORGANIZE</text><text x="380" y="99" text-anchor="middle">LEAD</text><text x="303" y="72">EVALUATE</text></g><text x="380" y="124" fill="#625f5a" font-size="17" text-anchor="middle">WHAT YOU LEARN CHANGES WHAT YOU DO NEXT</text></svg>`
   ];
-  const STORAGE_KEY='mgt340_week2_kc_v3';
-  const SUBMISSION_ENDPOINT=''; // Future La Salle-approved endpoint. Leave blank for GitHub-only mode.
+  const SUBMISSION_ENDPOINT='https://havsvkhddvdbzbsmhqbr.supabase.co/functions/v1/submit-mgt340-week2';
   const questions = [
     {
       stage:'The Opportunity',
@@ -276,7 +274,6 @@
     }
   ];
   const conceptNames=['Planning','Organizing','Leading & Delegation','People Management & Communication','Organizational Politics','Participative Decision Making','Managing Change','Decision-Making Process','Evaluating','Integrated Management Cycle'];
-  const scoringSalt=[8,12,14,18,20,23,27,29,31,36]; const correctIndex=i=>scoringSalt[i]-(i*3+7);
   const metrics={fan:72,staff:68,sponsor:65,ops:70}; const responses=[]; let index=0,selected=null,committed=false,startedAt=null,finishedAt=null;
   const student={first:'',last:'',email:''}; const $=id=>document.getElementById(id); const clamp=n=>Math.max(0,Math.min(100,n));
   const categoryLabels={functions:'Functional Areas',people:'People & Leadership',change:'Decision & Change',integrated:'Integrated Judgment'};
@@ -292,19 +289,62 @@
     item.options.forEach((opt,i)=>{const label=document.createElement('label');label.className='option';label.innerHTML=`<input type="radio" name="answer" value="${i}" aria-label="Option ${String.fromCharCode(65+i)}"><div class="option-letter">${String.fromCharCode(65+i)}</div><div class="option-text">${opt[0]}</div>`;label.addEventListener('click',()=>{if(committed)return;selected=i;document.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));label.classList.add('selected');$('commitBtn').disabled=false;$('lockedText').textContent='Ready to commit this response.'});$('options').appendChild(label)});
     $('commitBtn').disabled=true;$('commitBtn').style.display='';$('lockedText').textContent='Select one response.';$('consequence').style.display='none';$('nextBtn').textContent=index===questions.length-1?'Finish Knowledge Check':'Continue';window.scrollTo({top:0,behavior:'smooth'})
   }
-  function commit(){if(selected===null||committed)return;committed=true;const item=questions[index];responses.push({q:index+1,concept:conceptNames[index],stage:item.stage,answerIndex:selected,answerLetter:String.fromCharCode(65+selected),answerText:item.options[selected][0],correct:selected===correctIndex(index),category:item.category});applyDelta(item.options[selected][2]||{});$('consequenceText').textContent=item.options[selected][1];$('consequence').style.display='block';$('commitBtn').style.display='none';$('lockedText').textContent='Decision locked.';document.querySelectorAll('.option input').forEach(x=>x.disabled=true)}
-  function categoryScore(cat){const a=responses.filter(r=>r.category===cat);return {score:a.filter(r=>r.correct).length,max:a.length}}
+  function commit(){if(selected===null||committed)return;committed=true;const item=questions[index];responses.push({q:index+1,concept:conceptNames[index],stage:item.stage,answerIndex:selected,answerLetter:String.fromCharCode(65+selected),answerText:item.options[selected][0],category:item.category});applyDelta(item.options[selected][2]||{});$('consequenceText').textContent=item.options[selected][1];$('consequence').style.display='block';$('commitBtn').style.display='none';$('lockedText').textContent='Decision locked.';document.querySelectorAll('.option input').forEach(x=>x.disabled=true)}
   function band(s,m){const p=m?s/m:0;if(p>=.85)return `Strong application · ${s}/${m}`;if(p>=.65)return `Developing application · ${s}/${m}`;return `Review recommended · ${s}/${m}`}
-  async function makeReceipt(score){const raw=`${student.email}|${responses.map(r=>r.q+''+r.answerLetter).join('-')}|${score}|${Date.now()}`;try{const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));const hex=Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,10).toUpperCase();return `MGT340-W2-${score}OF10-${hex}`}catch(e){return `MGT340-W2-${score}OF10-${Math.random().toString(36).slice(2,12).toUpperCase()}`}}
-  function durationMinutes(){return Math.max(0,Math.round(((finishedAt-startedAt)/60000)*10)/10)}
-  function makePayload(receipt){const score=responses.filter(r=>r.correct).length;const f=categoryScore('functions'),p=categoryScore('people'),c=categoryScore('change'),i=categoryScore('integrated');return {course:'MGT 340',assessment:'Week 2 Knowledge Check',scenario:'Rivalry Night: The 48-Hour Pivot',receipt,firstName:student.first,lastName:student.last,email:student.email,startedAt:new Date(startedAt).toISOString(),submittedAt:new Date(finishedAt).toISOString(),durationMinutes:durationMinutes(),score,maxScore:10,functionalAreasScore:f.score,functionalAreasMax:f.max,peopleLeadershipScore:p.score,peopleLeadershipMax:p.max,decisionChangeScore:c.score,decisionChangeMax:c.max,integratedJudgmentScore:i.score,integratedJudgmentMax:i.max,fanExperience:metrics.fan,staffReadiness:metrics.staff,sponsorValue:metrics.sponsor,operationalControl:metrics.ops,responses:responses.map(r=>({question:r.q,concept:r.concept,stage:r.stage,answerLetter:r.answerLetter,answerText:r.answerText,correct:r.correct}))}}
-  async function postIfConfigured(payload){if(!SUBMISSION_ENDPOINT)return false;try{const res=await fetch(SUBMISSION_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});return res.ok}catch(e){return false}}
-  function downloadCSVFallback(payload){const h=['Receipt','First Name','Last Name','Email','Started','Submitted','Duration Minutes','Score','Max Score','Functional Areas','People & Leadership','Decision & Change','Integrated Judgment','Fan Experience','Staff Readiness','Sponsor Value','Operational Control',...payload.responses.map(r=>`Q${r.question} Response`)];const row=[payload.receipt,payload.firstName,payload.lastName,payload.email,payload.startedAt,payload.submittedAt,payload.durationMinutes,payload.score,payload.maxScore,`${payload.functionalAreasScore}/${payload.functionalAreasMax}`,`${payload.peopleLeadershipScore}/${payload.peopleLeadershipMax}`,`${payload.decisionChangeScore}/${payload.decisionChangeMax}`,`${payload.integratedJudgmentScore}/${payload.integratedJudgmentMax}`,payload.fanExperience,payload.staffReadiness,payload.sponsorValue,payload.operationalControl,...payload.responses.map(r=>`${r.answerLetter} — ${r.answerText}`)];const esc=v=>'"'+String(v??'').replaceAll('"','""')+'"';const csv=h.map(esc).join(',')+'\n'+row.map(esc).join(',');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`MGT340_W2_V3_${student.last}_${student.first}.csv`;a.click();URL.revokeObjectURL(a.href)}
-  function downloadWorkbook(payload){if(typeof XLSX==='undefined'){downloadCSVFallback(payload);return}const summary=[['MGT 340 — Week 2 Knowledge Check','Rivalry Night: The 48-Hour Pivot'],['First Name',payload.firstName],['Last Name',payload.lastName],['La Salle Email',payload.email],['Receipt',payload.receipt],['Started',payload.startedAt],['Submitted',payload.submittedAt],['Duration (minutes)',payload.durationMinutes],['Score',payload.score],['Maximum Score',payload.maxScore],['Functional Areas',`${payload.functionalAreasScore}/${payload.functionalAreasMax}`],['People & Leadership',`${payload.peopleLeadershipScore}/${payload.peopleLeadershipMax}`],['Decision & Change',`${payload.decisionChangeScore}/${payload.decisionChangeMax}`],['Integrated Judgment',`${payload.integratedJudgmentScore}/${payload.integratedJudgmentMax}`],['Fan Experience',payload.fanExperience],['Staff Readiness',payload.staffReadiness],['Sponsor Value',payload.sponsorValue],['Operational Control',payload.operationalControl]];const decisions=[['Question','Concept','Stage','Selected Option','Selected Response'],...payload.responses.map(r=>[r.question,r.concept,r.stage,r.answerLetter,r.answerText])];const importHeaders=['Receipt','First Name','Last Name','La Salle Email','Started','Submitted','Duration Minutes','Score','Max Score','Functional Areas Score','Functional Areas Max','People & Leadership Score','People & Leadership Max','Decision & Change Score','Decision & Change Max','Integrated Judgment Score','Integrated Judgment Max','Fan Experience','Staff Readiness','Sponsor Value','Operational Control',...payload.responses.map(r=>`Q${r.question} Response`)];const importRow=[payload.receipt,payload.firstName,payload.lastName,payload.email,payload.startedAt,payload.submittedAt,payload.durationMinutes,payload.score,payload.maxScore,payload.functionalAreasScore,payload.functionalAreasMax,payload.peopleLeadershipScore,payload.peopleLeadershipMax,payload.decisionChangeScore,payload.decisionChangeMax,payload.integratedJudgmentScore,payload.integratedJudgmentMax,payload.fanExperience,payload.staffReadiness,payload.sponsorValue,payload.operationalControl,...payload.responses.map(r=>r.answerLetter)];const wb=XLSX.utils.book_new();const ws1=XLSX.utils.aoa_to_sheet(summary);const ws2=XLSX.utils.aoa_to_sheet(decisions);const ws3=XLSX.utils.aoa_to_sheet([importHeaders,importRow]);ws1['!cols']=[{wch:24},{wch:65}];ws2['!cols']=[{wch:10},{wch:30},{wch:28},{wch:14},{wch:90}];ws3['!cols']=importHeaders.map((h,i)=>({wch:i<4?24:(i<21?18:14)}));XLSX.utils.book_append_sheet(wb,ws1,'Submission');XLSX.utils.book_append_sheet(wb,ws2,'Decisions');XLSX.utils.book_append_sheet(wb,ws3,'Instructor Import');XLSX.writeFile(wb,`MGT340_W2_V3_${student.last}_${student.first}.xlsx`)}
-  let finalPayload=null;
-  async function finish(){$('app').style.display='none';finishedAt=Date.now();const score=responses.filter(r=>r.correct).length;const f=categoryScore('functions'),p=categoryScore('people'),c=categoryScore('change'),i=categoryScore('integrated');$('finishName').textContent=`${student.first} ${student.last} · ${student.email}`;$('score').textContent=score;$('functionsBand').textContent=band(f.score,f.max);$('peopleBand').textContent=band(p.score,p.max);$('changeBand').textContent=band(c.score,c.max);$('integratedBand').textContent=band(i.score,i.max);const receipt=await makeReceipt(score);$('receiptCode').textContent=receipt;finalPayload=makePayload(receipt);await postIfConfigured(finalPayload);localStorage.setItem(STORAGE_KEY,JSON.stringify({completed:true,score,receipt,name:`${student.first} ${student.last}`,time:new Date().toISOString()}));$('finish').style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
-  $('startBtn').addEventListener('click',()=>{if(!validateIdentity())return;student.first=$('firstName').value.trim();student.last=$('lastName').value.trim();student.email=$('email').value.trim().toLowerCase();startedAt=Date.now();$('studentMini').innerHTML=`<strong>${student.first} ${student.last}</strong><br>${student.email}`;$('intro').style.display='none';$('app').style.display='block';renderQuestion()});$('commitBtn').addEventListener('click',commit);$('nextBtn').addEventListener('click',()=>{if(!committed)return;if(index<questions.length-1){index++;renderQuestion()}else finish()});$('downloadBtn').addEventListener('click',()=>{if(finalPayload)downloadWorkbook(finalPayload)});$('copyBtn').addEventListener('click',async()=>{const t=`MGT 340 Week 2 Knowledge Check — ${student.first} ${student.last} — Score: ${$('score').textContent}/10 — Receipt: ${$('receiptCode').textContent}`;try{await navigator.clipboard.writeText(t);$('copyBtn').textContent='Copied'}catch(e){$('copyBtn').textContent='Copy manually from receipt above'}});
-  const prior=localStorage.getItem(STORAGE_KEY);if(prior){try{const d=JSON.parse(prior);if(d.completed){$('intro').style.display='none';$('already').style.display='block';$('priorReceipt').innerHTML=`<div class="receipt"><div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--muted);margin-bottom:8px">Previous completion</div><code>${d.receipt}</code><div style="margin-top:8px;color:var(--muted)">${d.name||''} · Score: ${d.score}/10</div></div>`}}catch(e){}}
+  async function submitOfficial(){
+    const payload={
+      firstName:student.first,
+      lastName:student.last,
+      email:student.email,
+      startedAt:new Date(startedAt).toISOString(),
+      answers:responses.map(r=>r.answerIndex)
+    };
+    const res=await fetch(SUBMISSION_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    let data={};
+    try{data=await res.json()}catch(e){}
+    if(!res.ok){
+      const err=new Error(data.error||'Your submission could not be saved.');
+      err.code=data.code||'SUBMISSION_FAILED';
+      throw err;
+    }
+    return data;
+  }
+  let officialResult=null;
+  async function finish(){
+    finishedAt=Date.now();
+    $('nextBtn').disabled=true;
+    $('nextBtn').textContent='Submitting securely…';
+    try{
+      const result=await submitOfficial();
+      officialResult=result;
+      $('app').style.display='none';
+      $('finishName').textContent=`${student.first} ${student.last} · ${student.email}`;
+      $('score').textContent=result.score;
+      $('functionsBand').textContent=band(result.functionalAreasScore,result.functionalAreasMax);
+      $('peopleBand').textContent=band(result.peopleLeadershipScore,result.peopleLeadershipMax);
+      $('changeBand').textContent=band(result.decisionChangeScore,result.decisionChangeMax);
+      $('integratedBand').textContent=band(result.integratedJudgmentScore,result.integratedJudgmentMax);
+      $('receiptCode').textContent=result.receipt;
+      $('finish').style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }catch(e){
+      $('nextBtn').disabled=false;
+      $('nextBtn').textContent='Finish Knowledge Check';
+      if(e.code==='ALREADY_SUBMITTED'){
+        alert('A submission already exists for this La Salle email. Please notify your instructor if you believe this is an error.');
+      }else{
+        alert('Your official submission was NOT saved. Keep this page open and try again. If the problem continues, notify your instructor.');
+      }
+    }
+  }
+  $('startBtn').addEventListener('click',()=>{if(!validateIdentity())return;student.first=$('firstName').value.trim();student.last=$('lastName').value.trim();student.email=$('email').value.trim().toLowerCase();startedAt=Date.now();$('studentMini').innerHTML=`<strong>${student.first} ${student.last}</strong><br>${student.email}`;$('intro').style.display='none';$('app').style.display='block';renderQuestion()});
+  $('commitBtn').addEventListener('click',commit);
+  $('nextBtn').addEventListener('click',()=>{if(!committed)return;if(index<questions.length-1){index++;renderQuestion()}else finish()});
+  $('copyBtn').addEventListener('click',async()=>{const t=`MGT 340 Week 2 Knowledge Check — ${student.first} ${student.last} — Score: ${$('score').textContent}/10 — Receipt: ${$('receiptCode').textContent}`;try{await navigator.clipboard.writeText(t);$('copyBtn').textContent='Copied'}catch(e){$('copyBtn').textContent='Copy manually from receipt above'}});
 })();
 </script>
 </body></html>
